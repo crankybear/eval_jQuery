@@ -21,12 +21,7 @@
 		$('#list_creation').hide();
 	});
 	
-	$('#add_input').click(
-		function(event){
-			event.preventDefault();
-			addItem();
-		}
-	);
+
 
 	function signup(){
 		var newLogin = $('[name="new_login"]').val();
@@ -69,8 +64,18 @@
 				var item = data.todoListes[i].elements[j];
 				$('#list_' + i).append('<li>' + item + '</li>');
 			}
-			$('#list_' + i).append('<button class="add_form">Ajouter item</button>');
+			$('#list_' + i).append('<button class="add_input">Ajouter item</button>');
 		}
+		$('.add_input').click(function(event){
+			$('<input type="text" id="add_item"/>').insertBefore(event.target, null);
+			$('<button id="send_input">OK</button>').insertBefore(event.target, null);
+			$('#send_input').click(function(event){
+				event.preventDefault();
+				addItem();
+			});
+		});
+		
+		
 	}
 
 	function addItem(){
@@ -86,26 +91,5 @@
             url: 'http://92.222.69.104/todo/listes',
             data: JSON.stringify(allData)
         })
-	}
-
-	/*$('.add_form').click(function(event){
-		//$('<form id="my_form"></form').insertBefore(event.target);
-		//$('#my_form').append('<input type="text" id="add_item>');
-		$('<p>Coucou</p>').insertBefore(event.target);
-		console.log('Coucou');
-	})*/
-
-	$('.trigger').click(function(event){
-		$('<p>ça va bien?</p>').insertBefore(event.target);
-	})
-
-	var classArray = $('.add_form');
-	console.log(classArray);
-	for(i = 0; i < classArray.length; i++)
-	{
-		classArray[i].click(function()
-		{
-			console.log('Coucou');
-		})
 	}
 }
