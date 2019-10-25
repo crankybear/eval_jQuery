@@ -13,7 +13,8 @@ var listId = 0;
 var listItemId = 0;
 
 function connection(){
-	$('#list_container').css('visibility', 'visible');
+	$('#welcome').css('display', 'inline-flex');
+	$('#welcome').show();
 	var wayOfConnection = $(this).attr('id');
 	var login = $('[name="login"]').val();
 	var password = $('[name="password"]').val();
@@ -29,7 +30,7 @@ function connection(){
 		}).done(function(data){
 			$('#log_container').slideUp();
 			allData = data;
-			$('#welcome').html('Bienvenue ' + login);
+			$('#welcome').prepend('<h2>Bienvenue ' + login + '!</h2>');
 			getLists(data);
 		});
 	}
@@ -39,7 +40,7 @@ function connection(){
 			url: 'http://92.222.69.104/todo/create/' + newLogin + '/' + newPassword
 		}).done(function(data){
 			allData = data;
-			$('#welcome').html('Bienvenue ' + newLogin);
+			$('#welcome').prepend('<h2>Bienvenue ' + newLogin + '!</h2>');
 			$.ajax({
 				url: 'http://92.222.69.104/todo/listes',
 				headers: {'login' : newLogin, 'password' : newPassword}
@@ -81,18 +82,15 @@ function connection(){
 			listId++;
 		}
 
-		//New list creation button
-		$('#list_container').prepend('<button id="list_creation">New list</button>');
 		$('#list_creation').click(addList);
 	}
 
 	function addList(){
-		$('#list_container').append('<div class="post_it" id="new_list"></div>');
+		$('#list_container').prepend('<div class="post_it" id="new_list"></div>');
 		$('#new_list').append('<div id="temp_list"></div>');
 		$('#temp_list').append('<label>Nom de la liste</label>');
 		$('#temp_list').append('<input type="text" id="new_list_name"/>');
 		$('#temp_list').append('<button id="sendNewList">Valider</button>');
-		$('#list_creation').slideUp();
 		$('#sendNewList').click(function(event){
 			event.preventDefault();
 			sendList();
@@ -114,9 +112,7 @@ function connection(){
 			'name' : newListName, 
 			'elements' : []
 		});
-		var newList = $('#new_list_name');
 		$('#list_display').append('<ul class="post_it" id="list_' + listId + '"><img class="pin" src="pin-wallpaper-tiny.jpg"><h2 id="title_' + listId + '">' + newListName + '</h2></ul>');
-		$('#temp_list').slideDown();
 		saveChanges();
 	}
 
@@ -158,17 +154,23 @@ function connection(){
 	}
 
 	 function saveChanges() {
-            $.ajax({
-                url: 'http://92.222.69.104/todo/listes',
-                method: 'POST',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(allData),
-                success: function(data){
-                	console.log('Bravo');
-                },
-                error: function(){
-                	console.log('Fail');
-                }
-            });
-        }
+        $.ajax({
+            url: 'http://92.222.69.104/todo/listes',
+            method: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(allData),
+            success: function(data){
+            	console.log('Bravo');
+            },
+            error: function(){
+            	console.log('Fail');
+            }
+        }).done(function(){
+        	$('#new_list').remove();
+        	$('#list_display').remove();
+		 	$('#list_container').append('<div id="list_display"><div>');
+		 	getLists(allData);
+	 		});
+    };
+        
 }
